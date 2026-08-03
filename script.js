@@ -1,213 +1,256 @@
 /*==================================================
- FREE FIRE PREMIUM WEBSITE
- SCRIPT.JS
- PART 1
+ NEON X WEBSITE
+ SCRIPT.JS PART 1
 ==================================================*/
 
-document.addEventListener("DOMContentLoaded",()=>{
+document.addEventListener("DOMContentLoaded", () => {
 
-/*==============================
-LOADER
-==============================*/
+/*==========================
+ LOADER
+==========================*/
 
-const loader=document.getElementById("loader");
+const loader = document.getElementById("loader");
 
-window.addEventListener("load",()=>{
+window.addEventListener("load", () => {
 
-setTimeout(()=>{
+setTimeout(() => {
 
-loader.style.opacity="0";
-loader.style.visibility="hidden";
+loader.style.opacity = "0";
+loader.style.visibility = "hidden";
+
+setTimeout(() => {
+
+loader.remove();
+
+},800);
 
 },1200);
 
 });
 
-/*==============================
-MOUSE GLOW
-==============================*/
+/*==========================
+ SCROLL BUTTON
+==========================*/
 
-const glow=document.querySelector(".mouse-glow");
+const scrollBtn = document.getElementById("scrollTop");
+
+window.addEventListener("scroll", () => {
+
+if(window.scrollY > 300){
+
+scrollBtn.style.opacity="1";
+scrollBtn.style.pointerEvents="auto";
+scrollBtn.style.transform="translateY(0px)";
+
+}else{
+
+scrollBtn.style.opacity="0";
+scrollBtn.style.pointerEvents="none";
+scrollBtn.style.transform="translateY(25px)";
+
+}
+
+});
+
+scrollBtn.addEventListener("click",()=>{
+
+window.scrollTo({
+
+top:0,
+
+behavior:"smooth"
+
+});
+
+});
+
+/*==========================
+ CURSOR GLOW
+==========================*/
+
+const cursor=document.querySelector(".cursor-glow");
 
 document.addEventListener("mousemove",(e)=>{
 
-glow.style.left=e.clientX+"px";
-glow.style.top=e.clientY+"px";
+cursor.style.left=e.clientX+"px";
+cursor.style.top=e.clientY+"px";
 
 });
 
-/*==============================
-CARD TILT
-==============================*/
+/*==========================
+ CARD TILT
+==========================*/
 
-const card=document.querySelector(".card");
+const card=document.querySelector(".glass-card");
 
 document.addEventListener("mousemove",(e)=>{
 
-const x=(window.innerWidth/2-e.clientX)/30;
+const rect=card.getBoundingClientRect();
 
-const y=(window.innerHeight/2-e.clientY)/30;
+const x=e.clientX-rect.left;
+
+const y=e.clientY-rect.top;
+
+const rotateY=((x/rect.width)-0.5)*16;
+
+const rotateX=((y/rect.height)-0.5)*-16;
 
 card.style.transform=
-`rotateY(${x}deg) rotateX(${-y}deg)`;
+
+`perspective(1200px)
+rotateX(${rotateX}deg)
+rotateY(${rotateY}deg)
+scale(1.02)`;
 
 });
 
-document.addEventListener("mouseleave",()=>{
+card.addEventListener("mouseleave",()=>{
 
 card.style.transform=
-"rotateY(0deg) rotateX(0deg)";
+
+`perspective(1200px)
+rotateX(0deg)
+rotateY(0deg)
+scale(1)`;
 
 });
 
-/*==============================
-BUTTON HOVER
-==============================*/
+/*==========================
+ IMAGE HOVER
+==========================*/
 
-const buttons=document.querySelectorAll(".contact a");
+const image=document.querySelector(".image-box img");
 
-buttons.forEach(btn=>{
+image.addEventListener("mouseenter",()=>{
 
-btn.addEventListener("mouseenter",()=>{
-
-btn.style.transform="scale(1.05)";
+image.style.transform="scale(1.08) rotate(2deg)";
 
 });
 
-btn.addEventListener("mouseleave",()=>{
+image.addEventListener("mouseleave",()=>{
 
-btn.style.transform="scale(1)";
-
-});
+image.style.transform="scale(1) rotate(0deg)";
 
 });
 
-/*==============================
-RGB SHADOW
-==============================*/
+/*==========================
+ BUTTON RIPPLE
+==========================*/
 
-const colors=[
-"#00ffff",
-"#00ff88",
-"#ff00ff",
-"#00bfff"
-];
+document.querySelectorAll(".btn").forEach(btn=>{
 
-setInterval(()=>{
+btn.addEventListener("mousemove",(e)=>{
 
-const c=
-colors[Math.floor(Math.random()*colors.length)];
+const x=e.offsetX;
+const y=e.offsetY;
 
-card.style.boxShadow=
-`0 0 35px ${c}`;
+btn.style.setProperty("--x",x+"px");
+btn.style.setProperty("--y",y+"px");
 
-},2000);
-/*==============================
-FLOATING PARTICLES
-==============================*/
+});
+/*==================================================
+SCRIPT.JS PART 2
+PREMIUM EFFECTS
+==================================================*/
+
+/*==========================
+ FLOATING PARTICLES
+==========================*/
+
+const particleContainer=document.querySelector(".particles");
 
 function createParticle(){
 
-const particle=document.createElement("div");
+const p=document.createElement("span");
 
-particle.className="particle";
+const size=Math.random()*8+4;
 
-const size=Math.random()*6+2;
+p.style.width=size+"px";
+p.style.height=size+"px";
 
-particle.style.width=size+"px";
-particle.style.height=size+"px";
+p.style.left=Math.random()*100+"%";
 
-particle.style.left=Math.random()*window.innerWidth+"px";
+p.style.animationDuration=(Math.random()*8+8)+"s";
 
-particle.style.top=window.innerHeight+"px";
+p.style.opacity=Math.random();
 
-document.body.appendChild(particle);
+particleContainer.appendChild(p);
 
-let pos=window.innerHeight;
+setTimeout(()=>{
 
-const speed=Math.random()*3+2;
+p.remove();
 
-const move=setInterval(()=>{
-
-pos-=speed;
-
-particle.style.top=pos+"px";
-
-if(pos<-20){
-
-clearInterval(move);
-
-particle.remove();
+},16000);
 
 }
 
-},20);
+setInterval(createParticle,350);
 
-}
-
-setInterval(createParticle,250);
-
-/*==============================
-SHOOTING STAR
-==============================*/
+/*==========================
+ SHOOTING STARS
+==========================*/
 
 function shootingStar(){
 
 const star=document.createElement("div");
 
-star.className="shooting-star";
+star.className="spark";
 
-star.style.top=Math.random()*250+"px";
+star.style.left=Math.random()*window.innerWidth+"px";
 
-star.style.left="-250px";
+star.style.top="-20px";
+
+star.style.width=(Math.random()*120+80)+"px";
+
+star.style.transform=`rotate(${Math.random()*40-20}deg)`;
 
 document.body.appendChild(star);
 
-setTimeout(()=>{
+let y=-20;
+
+const speed=Math.random()*6+5;
+
+const timer=setInterval(()=>{
+
+y+=speed;
+
+star.style.top=y+"px";
+
+if(y>window.innerHeight+200){
+
+clearInterval(timer);
 
 star.remove();
 
-},3000);
+}
+
+},16);
 
 }
 
-setInterval(shootingStar,3500);
+setInterval(shootingStar,3000);
 
-/*==============================
-PROFILE IMAGE EFFECT
-==============================*/
+/*==========================
+ SCROLL REVEAL
+==========================*/
 
-const profile=document.querySelector(".profile");
+const reveals=document.querySelectorAll(
 
-profile.addEventListener("mouseenter",()=>{
+".info-card,.feature-card,.premium-box,.contact-area"
 
-profile.style.transform="scale(1.04)";
+);
 
-});
+function revealElements(){
 
-profile.addEventListener("mouseleave",()=>{
+reveals.forEach(el=>{
 
-profile.style.transform="scale(1)";
+const top=el.getBoundingClientRect().top;
 
-});
+if(top<window.innerHeight-80){
 
-/*==============================
-SCROLL REVEAL
-==============================*/
+el.style.opacity="1";
 
-const revealItems=document.querySelectorAll(".card");
-
-function reveal(){
-
-revealItems.forEach(item=>{
-
-const top=item.getBoundingClientRect().top;
-
-if(top<window.innerHeight-100){
-
-item.style.opacity="1";
-
-item.style.transform="translateY(0px)";
+el.style.transform="translateY(0px)";
 
 }
 
@@ -215,28 +258,267 @@ item.style.transform="translateY(0px)";
 
 }
 
-window.addEventListener("scroll",reveal);
+reveals.forEach(el=>{
 
-reveal();
+el.style.opacity="0";
 
-/*==============================
-WINDOW RESIZE
-==============================*/
+el.style.transform="translateY(40px)";
 
-window.addEventListener("resize",()=>{
-
-card.style.transform="rotateX(0deg) rotateY(0deg)";
+el.style.transition=".8s";
 
 });
 
-/*==============================
-CONSOLE MESSAGE
-==============================*/
+window.addEventListener("scroll",revealElements);
 
-console.log("🔥 Free Fire Premium Website Loaded Successfully");
+revealElements();
 
-/*==============================
-END OF SCRIPT
-==============================*/
+/*==========================
+ BUTTON GLOW
+==========================*/
+
+document.querySelectorAll(".btn").forEach(btn=>{
+
+btn.addEventListener("mouseenter",()=>{
+
+btn.style.filter="brightness(1.2)";
 
 });
+
+btn.addEventListener("mouseleave",()=>{
+
+btn.style.filter="brightness(1)";
+
+});
+
+});
+
+/*==========================
+ ONLINE DOT
+==========================*/
+
+const dot=document.querySelector(".dot");
+
+setInterval(()=>{
+
+dot.style.transform="scale(1.5)";
+
+setTimeout(()=>{
+
+dot.style.transform="scale(1)";
+
+},300);
+
+},1200);
+
+/*==========================
+ RANDOM RGB GLOW
+==========================*/
+
+const rgbColors=[
+
+"#00F5FF",
+
+"#8A2EFF",
+
+"#3B82F6",
+
+"#00FF99"
+
+];
+
+setInterval(()=>{
+
+const color=rgbColors[Math.floor(Math.random()*rgbColors.length)];
+
+document.documentElement.style.setProperty("--cyan",color);
+
+},5000);
+ 
+});
+
+/*==========================
+ CONSOLE
+==========================*/
+
+console.log("🔥 NEON X Loaded Successfully");
+
+});
+/*==================================================
+SCRIPT.JS PART 3
+FINAL EFFECTS
+==================================================*/
+
+/*==========================
+ PARALLAX BACKGROUND
+==========================*/
+
+const auroras=document.querySelectorAll(".aurora");
+
+document.addEventListener("mousemove",(e)=>{
+
+const x=(e.clientX/window.innerWidth)-0.5;
+const y=(e.clientY/window.innerHeight)-0.5;
+
+auroras.forEach((a,index)=>{
+
+const speed=(index+1)*18;
+
+a.style.transform=
+
+`translate(${x*speed}px,${y*speed}px)`;
+
+});
+
+});
+
+/*==========================
+ FLOATING GLOW
+==========================*/
+
+document.querySelectorAll(".floating-glow").forEach((glow,index)=>{
+
+setInterval(()=>{
+
+const x=(Math.random()*40)-20;
+const y=(Math.random()*40)-20;
+
+glow.style.transform=
+
+`translate(${x}px,${y}px) scale(${1+Math.random()/4})`;
+
+},4000+(index*700));
+
+});
+
+/*==========================
+ CARD SHINE
+==========================*/
+
+const inner=document.querySelector(".card-inner");
+
+setInterval(()=>{
+
+inner.style.boxShadow=
+
+`0 0 30px rgba(0,245,255,.25),
+0 0 80px rgba(138,46,255,.18)`;
+
+setTimeout(()=>{
+
+inner.style.boxShadow="none";
+
+},1200);
+
+},5000);
+
+/*==========================
+ CURSOR SCALE
+==========================*/
+
+const cursor=document.querySelector(".cursor-glow");
+
+document.querySelectorAll("a,button,.info-card,.feature-card").forEach(el=>{
+
+el.addEventListener("mouseenter",()=>{
+
+cursor.style.width="80px";
+cursor.style.height="80px";
+cursor.style.opacity=".45";
+
+});
+
+el.addEventListener("mouseleave",()=>{
+
+cursor.style.width="35px";
+cursor.style.height="35px";
+cursor.style.opacity=".22";
+
+});
+
+});
+
+/*==========================
+ MOBILE SUPPORT
+==========================*/
+
+if("ontouchstart" in window){
+
+document.body.classList.add("touch-device");
+
+}
+
+/*==========================
+ PAGE FADE
+==========================*/
+
+window.addEventListener("pageshow",()=>{
+
+document.body.style.opacity="1";
+
+});
+
+window.addEventListener("beforeunload",()=>{
+
+document.body.style.opacity=".98";
+
+});
+
+/*==========================
+ FPS OPTIMIZATION
+==========================*/
+
+let ticking=false;
+
+window.addEventListener("scroll",()=>{
+
+if(!ticking){
+
+window.requestAnimationFrame(()=>{
+
+revealElements();
+
+ticking=false;
+
+});
+
+ticking=true;
+
+}
+
+});
+
+/*==========================
+ RANDOM TITLE EFFECT
+==========================*/
+
+const titles=[
+
+"KARAN FF",
+
+"FREE FIRE MAX",
+
+"NEON X"
+
+];
+
+let titleIndex=0;
+
+setInterval(()=>{
+
+const title=document.querySelector(".hero h1");
+
+if(title){
+
+titleIndex=(titleIndex+1)%titles.length;
+
+title.textContent=titles[titleIndex];
+
+}
+
+},5000);
+
+/*==========================
+ END
+==========================*/
+
+console.log("🚀 NEON X Premium Website Ready!");
